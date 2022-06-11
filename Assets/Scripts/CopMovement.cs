@@ -5,9 +5,11 @@ using UnityEngine;
 public class CopMovement : MonoBehaviour
 {
     Rigidbody copRb;
+    Rigidbody[] ragdollRB;
     [SerializeField] bool isAlive;
     [SerializeField] float moveSpeed;
     [SerializeField] float turnSpeed;
+    Animator animator;
 
     [SerializeField] float distanceToShoot;
     [SerializeField] bool readyToShoot;
@@ -15,6 +17,7 @@ public class CopMovement : MonoBehaviour
     float reloadTimer;
     [SerializeField] GameObject bullet;
     [SerializeField] float bulletForce;
+
 
     [SerializeField] float bulletCollisionForce;
 
@@ -31,10 +34,16 @@ public class CopMovement : MonoBehaviour
     AudioSource playerAudio;
     [SerializeField] AudioClip gunshotSound;
 
+    private void Awake()
+    {
+        ragdollRB = GetComponentsInChildren<Rigidbody>();
+        copRb = GetComponent<Rigidbody>();
+        DisableRagdoll();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        copRb = GetComponent<Rigidbody>();
         player = GameObject.Find("Player");
         isAlive = true;
         spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -42,7 +51,7 @@ public class CopMovement : MonoBehaviour
         gameBounds = gameManager.GetBoundry();
         copBulletSpawnObj = transform.Find("Bullet Point").gameObject;
         playerAudio = GetComponent<AudioSource>();
-
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -87,11 +96,13 @@ public class CopMovement : MonoBehaviour
         if (distanceToPlayer > distanceToShoot)
         {
             readyToShoot = false;
+            animator.SetBool("isMoving", true);
             copRb.MovePosition(transform.position + (transform.forward * moveSpeed * Time.deltaTime));
         }
         else
         {
             readyToShoot = true;
+            animator.SetBool("isMoving", false);
         }
         if (readyToShoot && reloadTimer > reloadTime) FireBullet();
     }
@@ -110,5 +121,21 @@ public class CopMovement : MonoBehaviour
         playerAudio.PlayOneShot(gunshotSound);
         Instantiate(bullet, copBulletSpawnObj.transform.position, copBulletSpawnObj.transform.rotation).GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletForce, ForceMode.Impulse);
         reloadTimer = 0;
+    }
+
+    void DisableRagdoll()
+    {
+        foreach (Rigidbody rb in ragdollRB)
+        {
+            rb.isKinematic = true;
+        }
+    }
+
+    void EnableRagdoll()
+    {
+        foreach (Rigidbody rb in ragdollRB)
+        {
+            rb.isKinematic = false;
+        }
     }
 }

@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
     void Update()
     {
         //if (startSpawnComplete) SpawnLogic();
-        SpawnLogic();
+        // SpawnLogic();
     }
 
     void SpawnNPCs(GameObject npc, int count)
