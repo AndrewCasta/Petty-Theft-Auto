@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Ground
+  - npc
+  - bullet
+  - npc spawn
+  - cop
+  - ped
   layers:
   - Default
   - TransparentFX

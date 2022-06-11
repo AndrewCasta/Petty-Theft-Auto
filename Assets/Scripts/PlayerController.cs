@@ -5,62 +5,96 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
-
-    public float runForce = 20f;
-    public float sprintMultiplyer = 2f;
-
     private Vector3 movement;
+    GameManager gameManager;
+    float[] gameBounds;
 
-    public float[] gameBounds;
+    [SerializeField] float runForce = 20f;
+    [SerializeField] float sprintMultiplyer = 2f;
+    [SerializeField] float turnSpeed;
+
+    [SerializeField] GameObject bullet;
+    [SerializeField] float bulletForce;
+
+    GameObject playerBulletSpawnObj;
+
+    AudioSource playerAudio;
+    [SerializeField] AudioClip gunshotSound;
+
 
     // Start is called before the first frame update
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
-        // Setting player boundry width ground box collider
-        SetBoundry();
+        gameBounds = gameManager.GetBoundry();
+        playerBulletSpawnObj = transform.Find("Bullet Point").gameObject;
+
+        playerAudio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Base movement Vector for WASD input
-        movement = new Vector3 (Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-
-        // Sprint speed multiplier
-        if (Input.GetKey(KeyCode.LeftShift)) {
-            movement *= sprintMultiplyer;
+        if (Input.GetKeyDown("space"))
+        {
+            FireBullet();
         }
     }
 
     private void FixedUpdate()
     {
+        
+
+        // Base movement Vector for WASD input
+        movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+
+        // Sprint speed multiplier
+        if (Input.GetKey(KeyCode.LeftShift)) {
+            movement *= sprintMultiplyer;
+        }
+
         // 3D physics movement
         playerRb.MovePosition(transform.position + (movement * runForce * Time.deltaTime));
 
         // Setting player boundry width ground box collider
         PlayerMoveBoundry();
+
+        // Smooth turning (rb)
+        if (movement != Vector3.zero)
+        {
+            Quaternion toRotation = Quaternion.LookRotation(movement);
+            Quaternion rotatation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
+            playerRb.MoveRotation(rotatation);
+        }
+
+        
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("bullet"))
+        {
+            gameManager.DamagePlayer(1);
+        }
     }
 
-    void SetBoundry()
+    void FireBullet()
     {
-        float groundScaleZ = GameObject.Find("Ground").transform.localScale.z;
-        float boundryZ = GameObject.Find("Ground").GetComponent<BoxCollider>().size.z * groundScaleZ / 2;
-        float groundScaleX = GameObject.Find("Ground").transform.localScale.x;
-        float boundryX = GameObject.Find("Ground").GetComponent<BoxCollider>().size.x * groundScaleX / 2;
-        gameBounds = new float[] { boundryZ, boundryX, -boundryZ, -boundryX };
+        playerAudio.PlayOneShot(gunshotSound);
+        Instantiate(bullet, playerBulletSpawnObj.transform.position, playerBulletSpawnObj.transform.rotation).GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletForce, ForceMode.Impulse);
     }
+
     void PlayerMoveBoundry()
     {
-        if (transform.position.z > gameBounds[0]){
-            transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[0]);
-        } else if (transform.position.x > gameBounds[1]) {
-            transform.position = new Vector3(gameBounds[1], transform.position.y, transform.position.z);
-        } else if (transform.position.z < gameBounds[2]) {
-            transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[2]);
-        } else if (transform.position.x < gameBounds[3]) {
-            transform.position = new Vector3(gameBounds[3], transform.position.y, transform.position.z);
+        if (transform.position.z > gameBounds[0] - 0.999){
+            transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[0] - 1);
+        } else if (transform.position.x > gameBounds[1] - 0.999) {
+            transform.position = new Vector3(gameBounds[1] - 1, transform.position.y, transform.position.z);
+        } else if (transform.position.z < gameBounds[2] + 0.999) {
+            transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[2] + 1);
+        } else if (transform.position.x < gameBounds[3] + 0.999) {
+            transform.position = new Vector3(gameBounds[3] + 1, transform.position.y, transform.position.z);
         }
     }
 }
