@@ -37,8 +37,7 @@ public class SpawnManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (startSpawnComplete) SpawnLogic();
-        // SpawnLogic();
+        SpawnLogic();
     }
 
     void SpawnNPCs(GameObject npc, int count)

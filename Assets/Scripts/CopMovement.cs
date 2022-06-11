@@ -6,6 +6,7 @@ public class CopMovement : MonoBehaviour
 {
     Rigidbody copRb;
     Rigidbody[] ragdollRB;
+    Collider[] ragdollColliders;
     [SerializeField] bool isAlive;
     [SerializeField] float moveSpeed;
     [SerializeField] float turnSpeed;
@@ -37,6 +38,7 @@ public class CopMovement : MonoBehaviour
     private void Awake()
     {
         ragdollRB = GetComponentsInChildren<Rigidbody>();
+        ragdollColliders = GetComponentsInChildren<Collider>();
         copRb = GetComponent<Rigidbody>();
         DisableRagdoll();
     }
@@ -75,9 +77,7 @@ public class CopMovement : MonoBehaviour
         {
             isAlive = false;
             gameManager.copCount--;
-            copRb.angularVelocity = Vector3.zero;
-            copRb.velocity = Vector3.zero;
-            copRb.freezeRotation = false;
+            EnableRagdoll();
             Vector3 direction = (collision.GetContact(0).point - transform.position).normalized;
             copRb.AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
         }
@@ -89,6 +89,8 @@ public class CopMovement : MonoBehaviour
         directionToPlayer = (player.transform.position - transform.position).normalized;
         // Smooth turning
         Quaternion toRotation = Quaternion.LookRotation(directionToPlayer);
+        toRotation.x = 0;
+        toRotation.z = 0;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
 
         // Chasing player & shooting range check
@@ -97,7 +99,7 @@ public class CopMovement : MonoBehaviour
         {
             readyToShoot = false;
             animator.SetBool("isMoving", true);
-            copRb.MovePosition(transform.position + (transform.forward * moveSpeed * Time.deltaTime));
+            transform.position = transform.position + (transform.forward * moveSpeed * Time.deltaTime);
         }
         else
         {
@@ -129,13 +131,28 @@ public class CopMovement : MonoBehaviour
         {
             rb.isKinematic = true;
         }
+        copRb.isKinematic = false;
+        foreach (Collider col in ragdollColliders)
+        {
+            col.enabled = false;
+        }
+        GetComponent<Collider>().enabled = true;
     }
 
     void EnableRagdoll()
     {
+        animator.enabled = false;
         foreach (Rigidbody rb in ragdollRB)
         {
             rb.isKinematic = false;
         }
+        copRb.isKinematic = true;
+
+        foreach (Collider col in ragdollColliders)
+        {
+            col.enabled = true;
+        }
+        GetComponent<Collider>().enabled = false;
+
     }
 }
