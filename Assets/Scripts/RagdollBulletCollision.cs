@@ -63,6 +63,7 @@ public class RagdollBulletCollision : MonoBehaviour
 
     void EnableRagdoll()
     {
+        animator.enabled = false;
         foreach (Rigidbody rb in ragdollRB)
         {
             rb.isKinematic = false;
@@ -70,6 +71,5 @@ public class RagdollBulletCollision : MonoBehaviour
         }
         mainRb.isKinematic = true;
         mainRb.detectCollisions = false;
-        animator.enabled = false;
     }
 }
