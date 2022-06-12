@@ -7,8 +7,6 @@ public class PedMovement : MonoBehaviour
     Rigidbody pedRb;
     [SerializeField] float moveSpeed;
 
-    [SerializeField] float bulletCollisionForce;
-
     [SerializeField] bool isAlive;
 
     SpawnManager spawnManager;
@@ -54,11 +52,6 @@ public class PedMovement : MonoBehaviour
             isAlive = false;
             spawnManager.pedCount--;
             gameManager.pedKillCount++;
-            pedRb.angularVelocity = Vector3.zero;
-            pedRb.velocity = Vector3.zero;
-            pedRb.freezeRotation = false;
-            Vector3 direction = (collision.GetContact(0).point - transform.position).normalized;
-            pedRb.AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
         }
     }
 
