@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody playerRb;
     private Vector3 movement;
+    [SerializeField] Camera mainCamera;
+
     GameManager gameManager;
     float[] gameBounds;
 
@@ -42,13 +44,14 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
+
 
         // Base movement Vector for WASD input
         movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
         // Sprint speed multiplier
-        if (Input.GetKey(KeyCode.LeftShift)) {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
             movement *= sprintMultiplyer;
         }
 
@@ -58,15 +61,27 @@ public class PlayerController : MonoBehaviour
         // Setting player boundry width ground box collider
         PlayerMoveBoundry();
 
-        // Smooth turning (rb)
-        if (movement != Vector3.zero)
+        // turning (rb)
+        Quaternion toRotation;
+        if (Input.GetButton("Fire2"))
         {
-            Quaternion toRotation = Quaternion.LookRotation(movement);
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit))
+            {
+                toRotation = Quaternion.LookRotation(raycastHit.point - transform.position);
+                Quaternion rotatation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
+                playerRb.MoveRotation(rotatation);
+            }
+        }
+        else if (movement != Vector3.zero)
+        {
+            toRotation = Quaternion.LookRotation(movement);
             Quaternion rotatation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
             playerRb.MoveRotation(rotatation);
         }
 
-        
+
+
     }
     private void OnCollisionEnter(Collision collision)
     {
@@ -84,13 +99,20 @@ public class PlayerController : MonoBehaviour
 
     void PlayerMoveBoundry()
     {
-        if (transform.position.z > gameBounds[0] - 0.999){
+        if (transform.position.z > gameBounds[0] - 0.999)
+        {
             transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[0] - 1);
-        } else if (transform.position.x > gameBounds[1] - 0.999) {
+        }
+        else if (transform.position.x > gameBounds[1] - 0.999)
+        {
             transform.position = new Vector3(gameBounds[1] - 1, transform.position.y, transform.position.z);
-        } else if (transform.position.z < gameBounds[2] + 0.999) {
+        }
+        else if (transform.position.z < gameBounds[2] + 0.999)
+        {
             transform.position = new Vector3(transform.position.x, transform.position.y, gameBounds[2] + 1);
-        } else if (transform.position.x < gameBounds[3] + 0.999) {
+        }
+        else if (transform.position.x < gameBounds[3] + 0.999)
+        {
             transform.position = new Vector3(gameBounds[3] + 1, transform.position.y, transform.position.z);
         }
     }
