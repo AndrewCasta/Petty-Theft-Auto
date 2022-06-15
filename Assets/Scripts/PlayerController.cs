@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] GameObject bullet;
     [SerializeField] float bulletForce;
 
-    GameObject playerBulletSpawnPoint;
+    GameObject playerBulletSpawnObj;
 
     AudioSource playerAudio;
     [SerializeField] AudioClip gunshotSound;
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
         gameBounds = gameManager.GetBoundry();
-        playerBulletSpawnPoint = transform.Find("Bullet Point").gameObject;
+        playerBulletSpawnObj = transform.Find("Bullet Point").gameObject;
 
         playerAudio = GetComponent<AudioSource>();
     }
@@ -42,6 +42,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        
+
         // Base movement Vector for WASD input
         movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
@@ -77,7 +79,7 @@ public class PlayerController : MonoBehaviour
     void FireBullet()
     {
         playerAudio.PlayOneShot(gunshotSound);
-        Instantiate(bullet, playerBulletSpawnPoint.transform.position, playerBulletSpawnPoint.transform.rotation).GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletForce, ForceMode.Impulse);
+        Instantiate(bullet, playerBulletSpawnObj.transform.position, playerBulletSpawnObj.transform.rotation).GetComponent<Rigidbody>().AddRelativeForce(Vector3.up * bulletForce, ForceMode.Impulse);
     }
 
     void PlayerMoveBoundry()
