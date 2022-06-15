@@ -42,12 +42,9 @@ public class RagdollBulletCollision : MonoBehaviour
                 }
             }
             // Apply force
-            if (closestHitbox)
-            {
-                Debug.Log($"Closet Hitbox: {closestHitbox.gameObject.name}");
-                Vector3 direction = (closestHitbox.gameObject.transform.position - collision.gameObject.transform.position).normalized;
-                closestHitbox.gameObject.GetComponent<Rigidbody>().AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
-            }
+            Debug.Log($"Closet Hitbox: {closestHitbox.gameObject.name}");
+            Vector3 direction = (closestHitbox.gameObject.transform.position - collision.gameObject.transform.position).normalized;
+            closestHitbox.gameObject.GetComponent<Rigidbody>().AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
 
         }
     }

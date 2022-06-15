@@ -31,7 +31,7 @@ public class CopMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player") ?? GameObject.Find("XR Rig");
+        player = GameObject.Find("Player");
         isAlive = true;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         animator = GetComponent<Animator>();
@@ -80,7 +80,7 @@ public class CopMovement : MonoBehaviour
         {
             readyToShoot = false;
             animator.SetBool("isMoving", true);
-            gameObject.GetComponent<Rigidbody>().MovePosition(transform.position + (transform.forward * moveSpeed * Time.deltaTime));
+            transform.position = transform.position + (transform.forward * moveSpeed * Time.deltaTime);
         }
         else
         {
