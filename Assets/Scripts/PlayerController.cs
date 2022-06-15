@@ -37,10 +37,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space"))
-        {
-            FireBullet();
-        }
+        if (Input.GetKeyDown("space") || Input.GetButtonDown("Fire1")) FireBullet();
     }
 
     private void FixedUpdate()
