@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CopMovement : MonoBehaviour
 {
+    Rigidbody thisRb;
     [SerializeField] bool isAlive;
     [SerializeField] float moveSpeed;
     [SerializeField] float turnSpeed;
@@ -31,6 +32,7 @@ public class CopMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        thisRb = GetComponent<Rigidbody>();
         player = GameObject.Find("Player");
         isAlive = true;
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -80,7 +82,9 @@ public class CopMovement : MonoBehaviour
         {
             readyToShoot = false;
             animator.SetBool("isMoving", true);
-            transform.position = transform.position + (transform.forward * moveSpeed * Time.deltaTime);
+            thisRb.MovePosition(transform.position + (transform.forward * moveSpeed * Time.deltaTime));
+            // transform.position = transform.position + (transform.forward * moveSpeed * Time.deltaTime);
+
         }
         else
         {
