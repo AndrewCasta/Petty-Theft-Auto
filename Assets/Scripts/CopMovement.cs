@@ -63,6 +63,7 @@ public class CopMovement : MonoBehaviour
         {
             isAlive = false;
             gameManager.copCount--;
+            gameManager.copsKilledCount++;
         }
     }
 

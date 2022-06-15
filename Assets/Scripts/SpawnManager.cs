@@ -37,7 +37,7 @@ public class SpawnManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SpawnLogic();
+        if (gameManager.isGameActive) SpawnLogic();
     }
 
     void SpawnNPCs(GameObject npc, int count)
@@ -57,6 +57,7 @@ public class SpawnManager : MonoBehaviour
     void SpawnLogic()
     {
         spawnTimer += Time.deltaTime;
+        if (gameManager.pedKillCount < 1) minCops = 0;
         if (gameManager.pedKillCount >= 1) minCops = 1;
         if (gameManager.pedKillCount >= 5)
         {

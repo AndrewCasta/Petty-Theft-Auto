@@ -7,35 +7,77 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public bool isGameActive;
+    [SerializeField] GameObject player;
+
     [SerializeField] int playerHp;
     public int pedKillCount;
-    [SerializeField] int copsKilled;
+    public int copsKilledCount;
     public int copCount;
 
-    public TextMeshProUGUI healthText;
-    public TextMeshProUGUI pedKilledText;
-    public TextMeshProUGUI copsAliveText;
+    [SerializeField] GameObject startScreen;
 
+    [SerializeField] GameObject HUD;
+    [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] TextMeshProUGUI pedKilledTextHUD;
+    [SerializeField] TextMeshProUGUI copsAliveTextHUD;
+
+    [SerializeField] GameObject gameOverScreen;
+    [SerializeField] TextMeshProUGUI pedKilledTextSummary;
+    [SerializeField] TextMeshProUGUI copsKilledTextSummary;
 
     // Start is called before the first frame update
     void Start()
     {
-        playerHp = 5;
+        isGameActive = false;
+        // create start game menu,
+        // button that starts game
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (playerHp < 1) Debug.Log("Player dead");
         healthText.text = $"Health: {playerHp}";
-        pedKilledText.text = $"Peds Killed: {pedKillCount}";
-        copsAliveText.text = $"Cop Count: {copCount}";
+        pedKilledTextHUD.text = $"Peds Killed: {pedKillCount}";
+        copsAliveTextHUD.text = $"Cop Count: {copCount}";
+    }
+
+    public void StartGame()
+    {
+        HUD.SetActive(true);
+        startScreen.SetActive(false);
+        gameOverScreen.SetActive(false);
+        ResetGame();
     }
 
     public void DamagePlayer(int damage)
     {
         if (playerHp > 0) playerHp -= damage;
+        if (playerHp < 1) GameOver();
     }
+
+    void GameOver()
+    {
+        isGameActive = false;
+        HUD.SetActive(false);
+        startScreen.SetActive(false);
+        gameOverScreen.SetActive(true);
+        pedKilledTextSummary.text = $"Pedestrian Kills: {pedKillCount}";
+        copsKilledTextSummary.text = $"Cop Kills: {copsKilledCount}";
+    }
+
+    private void ResetGame()
+    {
+        isGameActive = true;
+        playerHp = 5;
+        pedKillCount = 0;
+        copsKilledCount = 0;
+        copCount = 0;
+        player.transform.position = new Vector3(0, 1.17f, 0);
+        GameObject[] npcs = GameObject.FindGameObjectsWithTag("npc");
+        foreach (GameObject npc in npcs) Destroy(npc);
+    }
+
     public float[] GetBoundry()
     {
         // This method works when the ground object is a square. 

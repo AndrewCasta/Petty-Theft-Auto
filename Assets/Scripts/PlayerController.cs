@@ -39,13 +39,23 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown("space") || Input.GetButtonDown("Fire1")) FireBullet();
+        if ((Input.GetKeyDown("space") || Input.GetButtonDown("Fire1")) && gameManager.isGameActive) FireBullet();
     }
 
     private void FixedUpdate()
     {
+        if (gameManager.isGameActive) PlayerControl();
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("bullet"))
+        {
+            gameManager.DamagePlayer(1);
+        }
+    }
 
-
+    void PlayerControl()
+    {
         // Base movement Vector for WASD input
         movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
@@ -80,16 +90,6 @@ public class PlayerController : MonoBehaviour
             toRotation = Quaternion.LookRotation(movement);
             Quaternion rotatation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
             playerRb.MoveRotation(rotatation);
-        }
-
-
-
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("bullet"))
-        {
-            gameManager.DamagePlayer(1);
         }
     }
 
