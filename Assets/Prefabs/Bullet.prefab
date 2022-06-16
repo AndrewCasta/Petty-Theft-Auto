@@ -126,4 +126,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cd7fe9c9b8f0e043a4ce52bbc13fe2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletCollisionForce: 10000

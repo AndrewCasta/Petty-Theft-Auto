@@ -69,6 +69,8 @@ public class PlayerController : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit raycastHit))
             {
                 toRotation = Quaternion.LookRotation(raycastHit.point - transform.position);
+                toRotation.x = 0;
+                toRotation.z = 0;
                 Quaternion rotatation = Quaternion.RotateTowards(transform.rotation, toRotation, turnSpeed * Time.deltaTime);
                 playerRb.MoveRotation(rotatation);
             }

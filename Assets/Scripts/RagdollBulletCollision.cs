@@ -7,6 +7,7 @@ public class RagdollBulletCollision : MonoBehaviour
     Rigidbody mainRb;
     Rigidbody[] ragdollRB;
     Animator animator;
+    BloodEffect bloodEffect;
 
     [SerializeField] float bulletCollisionForce;
 
@@ -15,6 +16,7 @@ public class RagdollBulletCollision : MonoBehaviour
         ragdollRB = GetComponentsInChildren<Rigidbody>();
         mainRb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
+        bloodEffect = GameObject.Find("SpawnManager").GetComponent<BloodEffect>();
         DisableRagdoll();
     }
 
@@ -41,9 +43,13 @@ public class RagdollBulletCollision : MonoBehaviour
                     // Debug.Log($"Hitbox: {hitbox.gameObject.name} - Distance: {hitboxDistance}");
                 }
             }
-            // Apply force
-            Debug.Log($"Closet Hitbox: {closestHitbox.gameObject.name}");
+            // Handle hitbox hit
+            // Debug.Log($"Closet Hitbox: {closestHitbox.gameObject.name}");
             Vector3 direction = (closestHitbox.gameObject.transform.position - collision.gameObject.transform.position).normalized;
+
+            // Add blood effect
+            bloodEffect.SpawnBloodEffect(closestHitbox.gameObject);
+            // Apply force
             closestHitbox.gameObject.GetComponent<Rigidbody>().AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
 
         }

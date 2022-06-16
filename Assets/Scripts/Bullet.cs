@@ -5,7 +5,6 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     float[] gameBounds;
-    public float bulletCollisionForce;
 
     // Start is called before the first frame update
     void Start()
