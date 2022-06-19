@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class RagdollBulletCollision : MonoBehaviour
 {
+    GameManager gameManager;
+    
     Rigidbody mainRb;
     Rigidbody[] ragdollRB;
     Animator animator;
     BloodEffect bloodEffect;
 
+    public int health;
+
     [SerializeField] float bulletCollisionForce;
 
     private void Awake()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         ragdollRB = GetComponentsInChildren<Rigidbody>();
         mainRb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
@@ -22,13 +27,21 @@ public class RagdollBulletCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+
         if (collision.gameObject.CompareTag("bullet") && !collision.gameObject.GetComponent<Bullet>().hasHit)
         {
             // Set the bullet to 'hasHit' so it won't hit again.
             collision.gameObject.GetComponent<Bullet>().hasHit = true;
 
-            // Find closest ragdoll collider
+            // Remove health and check if dead
+            health--;
+            if (health > 0) return;
+            if (health < 1 && gameObject.name == "Player") gameManager.GameOver();
+
+            if (gameObject.name == "Player") return;
+
             EnableRagdoll();
+            // Find closest ragdoll collider
             Collider[] hitColliders = Physics.OverlapSphere(collision.gameObject.transform.position, 2f);
             Collider bulletCollider = collision.gameObject.GetComponent<Collider>();
             Collider closestHitbox = null;
@@ -54,7 +67,6 @@ public class RagdollBulletCollision : MonoBehaviour
             bloodEffect.SpawnBloodEffect(closestHitbox.gameObject);
             // Apply force
             closestHitbox.gameObject.GetComponent<Rigidbody>().AddForce(-direction * bulletCollisionForce, ForceMode.Impulse);
-
         }
     }
 
@@ -67,12 +79,13 @@ public class RagdollBulletCollision : MonoBehaviour
         }
         mainRb.isKinematic = false;
         mainRb.detectCollisions = true;
-        animator.enabled = true;
+        if(animator != null) animator.enabled = true;
     }
 
     void EnableRagdoll()
     {
-        animator.enabled = false;
+        if (animator != null) animator.enabled = false;
+        mainRb.constraints = RigidbodyConstraints.None;
         foreach (Rigidbody rb in ragdollRB)
         {
             rb.isKinematic = false;

@@ -841,6 +841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9786a9d479471a44f93e6bd1312fd763, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: 1
   bulletCollisionForce: 300
 --- !u!1 &2540161857981893948
 GameObject:

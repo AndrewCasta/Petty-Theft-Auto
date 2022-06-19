@@ -46,13 +46,6 @@ public class PlayerController : MonoBehaviour
     {
         if (gameManager.isGameActive) PlayerControl();
     }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("bullet"))
-        {
-            gameManager.DamagePlayer(1);
-        }
-    }
 
     void PlayerControl()
     {

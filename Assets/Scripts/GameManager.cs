@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthText.text = $"Health: {playerHp}";
+        healthText.text = $"Health: {GameObject.Find("Player").GetComponent<RagdollBulletCollision>().health}";
         pedKilledTextHUD.text = $"Peds Killed: {pedKillCount}";
         copsAliveTextHUD.text = $"Cop Count: {copCount}";
     }
@@ -51,26 +51,20 @@ public class GameManager : MonoBehaviour
         ResetGame();
     }
 
-    public void DamagePlayer(int damage)
-    {
-        if (playerHp > 0) playerHp -= damage;
-        if (playerHp < 1) GameOver();
-    }
-
-    void GameOver()
+    public void GameOver()
     {
         isGameActive = false;
+        pedKilledTextSummary.text = $"Pedestrian Kills: {pedKillCount}";
+        copsKilledTextSummary.text = $"Cop Kills: {copsKilledCount}";
         HUD.SetActive(false);
         startScreen.SetActive(false);
         gameOverScreen.SetActive(true);
-        pedKilledTextSummary.text = $"Pedestrian Kills: {pedKillCount}";
-        copsKilledTextSummary.text = $"Cop Kills: {copsKilledCount}";
     }
 
     private void ResetGame()
     {
         isGameActive = true;
-        playerHp = 5;
+        GameObject.Find("Player").GetComponent<RagdollBulletCollision>().health = 5;
         pedKillCount = 0;
         copsKilledCount = 0;
         copCount = 0;
