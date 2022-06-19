@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public int copsKilledCount;
     public int copCount;
 
+    SpawnManager spawnManager;
+
     [SerializeField] GameObject startScreen;
 
     [SerializeField] GameObject HUD;
@@ -30,8 +32,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         isGameActive = false;
-        // create start game menu,
-        // button that starts game
+        spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
     }
 
     // Update is called once per frame
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
         pedKillCount = 0;
         copsKilledCount = 0;
         copCount = 0;
+        spawnManager.pedCount = 0;
         player.transform.position = new Vector3(0, 1.17f, 0);
         GameObject[] npcs = GameObject.FindGameObjectsWithTag("npc");
         foreach (GameObject npc in npcs) Destroy(npc);

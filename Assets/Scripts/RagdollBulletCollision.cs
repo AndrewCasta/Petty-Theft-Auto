@@ -22,8 +22,11 @@ public class RagdollBulletCollision : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("bullet"))
+        if (collision.gameObject.CompareTag("bullet") && !collision.gameObject.GetComponent<Bullet>().hasHit)
         {
+            // Set the bullet to 'hasHit' so it won't hit again.
+            collision.gameObject.GetComponent<Bullet>().hasHit = true;
+
             // Find closest ragdoll collider
             EnableRagdoll();
             Collider[] hitColliders = Physics.OverlapSphere(collision.gameObject.transform.position, 2f);

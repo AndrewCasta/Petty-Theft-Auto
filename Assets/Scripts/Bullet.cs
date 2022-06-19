@@ -5,12 +5,13 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     float[] gameBounds;
+    public bool hasHit { get; set; }
 
     // Start is called before the first frame update
     void Start()
     {
         gameBounds = GameObject.Find("GameManager").GetComponent<GameManager>().GetBoundry();
-
+        hasHit = false;
     }
 
     // Update is called once per frame
